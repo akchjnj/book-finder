@@ -1,15 +1,47 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{title}} | Book Finder</title>
-</head>
-<body>
-  <h1>Search Result</h1>
-  <p>Searched Book：<strong>{{ book_title }}</strong></p>
-  <p>※Book information display</p>
-  <a href="/search">Search Again</a><br>
-  <a href="/">Home</a>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}} | Book Finder</title>
+    <style>
+      .book-card {
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+      }
+      .book-thumbnail {
+        max-width: 128px;
+        height: auto;
+      }
+      .error {
+        color: red;
+        padding: 10px;
+        background-color: #fee;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>検索結果</h1>
+    <p>検索キーワード：<strong>{{ search_query }}</strong></p>
+
+    {% if error %}
+    <div class="error">{{error}}</div>
+    {% elif book %}
+    <div class="book-card">
+      {% if book.thumbnail %}
+      <img src="{{book.thumbnail}}" alt="{{book.title}}" class="book-thumbnail" />
+      {% endif %}
+      <h2>{{book.title}}</h2>
+      <p><strong>著者：</strong>{{book.authors}}</p>
+      <p><strong>出版社：</strong>{{book.publisher}}</p>
+    </div>
+    {% else %}
+    <p>検索結果が見つかりませんでした。</p>
+    {% endif %}
+    <a href="/search">もう一度検索</a><br />
+    <a href="/">Home</a>
+  </body>
 </html>
