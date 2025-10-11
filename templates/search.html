@@ -4,15 +4,61 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}} | Book Finder</title>
+    <style>
+      .search-form {
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
   </head>
   <body>
-    <h1>Book Search</h1>
-    <form method="POST" action="/search">
-      <label for="book_title">Book Name:</label><br>
-      <input type="text" id="book_title" name="book_title" required><br>
-      <button type="submit">Search</button>
-    </form>
-    <br>
+    <h1>書籍検索</h1>
+    <div class="search-form">
+      <form method="POST" action="/search">
+        <div class="form-group">
+          <label>検索タイプ</label>
+          <input type="radio" id="type_title" name="search_type" value="title" checked />
+          <label for="type_title" style="display: inline">タイトル検索</label>
+          <input type="radio" id="type_isbn" name="search_type" value="isbn" />
+          <label for="type_isbn" style="display: inline">ISBN検索</label>
+        </div>
+        <div class="form-group">
+          <label for="book_title">書籍名またはISBN:</label>
+          <input type="text" id="book_title" name="book_title" required placeholder="例: Python入門 または 9784295013273" />
+        </div>
+        <button type="submit">Search</button>
+      </form>
+    </div>
+    <br />
     <a href="/">Home</a>
   </body>
 </html>

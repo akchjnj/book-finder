@@ -7,19 +7,32 @@
     <style>
       .book-card {
         border: 1px solid #ddd;
-        padding: 20px;
-        margin: 20px 0;
+        padding: 15px;
+        margin: 15px 0;
         border-radius: 5px;
+        display: flex;
+        gap: 15px;
       }
       .book-thumbnail {
-        max-width: 128px;
-        height: auto;
+        width: 128px;
+        height: 180px;
+        object-fit: cover;
+        object-position: center;
+        flex-shrink: 0;
+        border-radius: 3px; /* 角を少し丸く */
+      }
+      .book-info {
+        flex-grow: 1;
       }
       .error {
         color: red;
         padding: 10px;
         background-color: #fee;
         border-radius: 5px;
+      }
+      .isbn-info {
+        font-size: 0.9em;
+        color: #666;
       }
     </style>
   </head>
@@ -29,16 +42,29 @@
 
     {% if error %}
     <div class="error">{{error}}</div>
-    {% elif book %}
+
+    {% elif books %}
+    <p>{{total_items}}件の結果が見つかりました（最大10件表示）</p>
+
+    {% for book in books %}
     <div class="book-card">
       {% if book.thumbnail %}
       <img src="{{book.thumbnail}}" alt="{{book.title}}" class="book-thumbnail" />
       {% endif %}
-      <h2>{{book.title}}</h2>
-      <p><strong>著者：</strong>{{book.authors}}</p>
-      <p><strong>出版社：</strong>{{book.publisher}}</p>
+
+      <div class="book_info">
+        <h3>{{book.title}}</h3>
+        <p><strong>著者：</strong>{{book.authors}}</p>
+        <p><strong>出版社：</strong>{{book.publisher}} ({{book.published_date}})</p>
+
+        {% if book.isbn_13 or book.isbn_10 %}
+        <p class="isbn_info">{% if book.isbn_13%} <strong>ISBN-13:</strong> {{book.isbn_13}} {%endif%} {% if book.isbn_10%} <strong>ISBN-10:</strong> {{book.isbn_10}} {%endif%}</p>
+        {% endif %}
+
+        <p>{{book.description}}</p>
+      </div>
     </div>
-    {% else %}
+    {% endfor %} {% else %}
     <p>検索結果が見つかりませんでした。</p>
     {% endif %}
     <a href="/search">もう一度検索</a><br />
