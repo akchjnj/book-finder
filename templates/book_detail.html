@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Book Finder</title>
+    <style>
+        .book-detail {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .book-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .book-cover {
+            flex-shrink: 0;
+        }
+        .book-cover img {
+            width: 200px;
+            height: 280px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .book-info {
+            flex-grow: 1;
+        }
+        .book-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+        .book-meta {
+            margin-bottom: 20px;
+        }
+        .book-meta p {
+            margin: 8px 0;
+            color: #666;
+        }
+        .book-description {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .book-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .book-links a {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .book-links a:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            padding: 20px;
+            background-color: #fee;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .library-info {
+            background-color: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .library-info h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        .library-status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .status-available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-unavailable {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-unknown {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .library-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .calil-link {
+            margin-top: 15px;
+        }
+        .calil-link a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .calil-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% else %}
+        <div class="book-detail">
+            <div class="book-header">
+                <div class="book-cover">
+                    {% if book.thumbnail %}
+                        <img src="{{book.thumbnail}}" alt="{{book.title}}" />
+                    {% else %}
+                        <div style="width: 200px; height: 280px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                            画像なし
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="book-info">
+                    <h1 class="book-title">{{book.title}}</h1>
+                    
+                    <div class="book-meta">
+                        {% if book.authors %}
+                        <p><strong>著者:</strong> {{book.authors|join(', ')}}</p>
+                        {% endif %}
+                        {% if book.publisher %}
+                        <p><strong>出版社:</strong> {{book.publisher}}</p>
+                        {% endif %}
+                        {% if book.published_date %}
+                        <p><strong>出版日:</strong> {{book.published_date}}</p>
+                        {% endif %}
+                        {% if book.language %}
+                        <p><strong>言語:</strong> {{book.language}}</p>
+                        {% endif %}
+                        {% if book.page_count %}
+                        <p><strong>ページ数:</strong> {{book.page_count}}ページ</p>
+                        {% endif %}
+                        {% if book.categories %}
+                        <p><strong>カテゴリ:</strong> {{book.categories|join(', ')}}</p>
+                        {% endif %}
+                        {% if book.isbn_13 %}
+                        <p><strong>ISBN-13:</strong> {{book.isbn_13}}</p>
+                        {% endif %}
+                        {% if book.isbn_10 %}
+                        <p><strong>ISBN-10:</strong> {{book.isbn_10}}</p>
+                        {% endif %}
+                    </div>
+                    
+                    {% if book.preview_link or book.info_link %}
+                        <div class="book-links">
+                            {% if book.preview_link %}
+                                <a href="{{book.preview_link}}" target="_blank">プレビュー</a>
+                            {% endif %}
+                            {% if book.info_link %}
+                                <a href="{{book.info_link}}" target="_blank">Google Books</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if book.description %}
+                <div class="book-description">
+                    <h3>内容紹介</h3>
+                    <p>{{book.description}}</p>
+                </div>
+            {% endif %}
+            
+            <!-- 新規追加: 図書館蔵書情報 -->
+            {% if library_info %}
+                <div class="library-info">
+                    <h3>📚 図書館での蔵書状況</h3>
+                    <div class="library-status">
+                        <div class="library-name">広島市立図書館</div>
+                        <div class="system-status">
+                            {% if library_info.libkey %}
+                                {% for libkey,status in library_info.libkey.items() %}
+                                    <span class="status-badge 
+                                        {% if status == '貸出可' or status == '蔵書あり' %}status-available
+                                        {% elif status == '貸出中' or status == '予約中' %}status-unavailable
+                                        {% else %}status-unknown{% endif %}">
+                                        {{ libkey }}: {{ status }}
+                                    </span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="status-badge status-unknown">蔵書なし</span>
+                            {% endif %}
+                        </div>
+                        {% if library_info.reserveurl %}
+                            <div class="reserve-link">
+                                <a href="{{ library_info.reserveurl }}" target="_blank" class="btn btn-primary btn-sm">
+                                    📖 予約する
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="calil-link">
+                        <a href="https://calil.jp/book/{{ book.isbn_10 or book.isbn_13 }}" target="_blank">
+                            📖 カーリルで詳細を確認
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <br>
+    <a href="/search">検索に戻る</a> | 
+    <a href="/">Home</a>
+</body>
+</html>

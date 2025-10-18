@@ -38,6 +38,8 @@
   </head>
   <body>
     <h1>検索結果</h1>
+    <a href="/search">もう一度検索</a><br />
+    <a href="/">Home</a>
     <p>検索キーワード：<strong>{{ search_query }}</strong></p>
 
     {% if error %}
@@ -53,7 +55,7 @@
       {% endif %}
 
       <div class="book_info">
-        <h3>{{book.title}}</h3>
+        <h3><a href="/book/{{book.id}}" style="text-decoration: none; color: inherit;">{{book.title}}</a></h3>
         <p><strong>著者：</strong>{{book.authors}}</p>
         <p><strong>出版社：</strong>{{book.publisher}} ({{book.published_date}})</p>
 
@@ -62,6 +64,7 @@
         {% endif %}
 
         <p>{{book.description}}</p>
+        <p><a href="/book/{{book.id}}" style="color: #007bff; text-decoration: none;">詳細を見る →</a></p>
       </div>
     </div>
     {% endfor %} {% else %}
